@@ -4,16 +4,18 @@ import { hi } from "./GraphLib"
 var can = document.getElementById("c");
 var ctx = can.getContext('2d');
 
-can.width = 1000;
-can.height = 1000;
+can.width = document.body.clientWidth;
+can.height = document.body.clientHeight;
 
 function draw() {
 
 }
 
 function drawVertex(x, y) {
+    ctx.beginPath();
     ctx.arc(x, y, 5, 0, 2 * Math.PI);
     ctx.stroke();
+    
 }
 
 can.addEventListener('mousedown', event => {
