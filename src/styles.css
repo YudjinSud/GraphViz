@@ -1,20 +1,9 @@
-html {
-  box-sizing: border-box;
+html, body {
+  margin: 0;
+  height: 100%;
 }
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-
-  /*
-   * CSS image reference example.
-   */
-  background-image: url('./images/bg-pattern.png');
+#c {
+  width: 100%;
+  height: 100%;
+  display: block;
 }

@@ -12,7 +12,6 @@ $ npm install # or yarn
 $ npm start
 ```
 
-
 ## Credentials
 Thanks to
 https://github.com/luxplanjay/webpack-starter-kit

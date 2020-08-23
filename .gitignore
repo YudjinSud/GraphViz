@@ -1,6 +1,8 @@
 # production
 /build
 
+src/dist
+
 # Logs
 logs
 *.log
