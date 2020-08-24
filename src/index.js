@@ -86,7 +86,10 @@ can.addEventListener('mousedown', event => {
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
             //check_longclick();
-            isVerticeClicked++;
+            if(isVerticeClicked == 0){
+                if(Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
+                else isVerticeClicked= 1;
+            }else isVerticeClicked++;
             console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
@@ -97,6 +100,7 @@ can.addEventListener('mousedown', event => {
         vertices.push(v);
         number++;
     }
+    
     if (isVerticeClicked == 1) {
         if (verticeNum < 1) {
             isVerticeClicked = 0;
@@ -140,7 +144,7 @@ function reflectMouse(startX, startY, x, y) {
 }
 
 can.addEventListener('mousemove', e => {
-    if (isVerticeClicked == 1) {
+    if (isVerticeClicked == 3) {
         let rect = can.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
@@ -148,7 +152,7 @@ can.addEventListener('mousemove', e => {
         vertices[verticeNum - 1].y = y;
         draw();
     }
-    if (isVerticeClicked == 2) isVerticeClicked = 0;
+    if (isVerticeClicked == 4) isVerticeClicked = 0;
 
 })
 
