@@ -16,6 +16,10 @@ class Vertex {
     connected_v = [];
 }
 
+var delay;
+
+var longpress = 1300;
+
 var vertices = [];
 
 var stateMachine = [];
@@ -25,7 +29,7 @@ can.height = document.body.clientHeight;
 
 function draw() {
     ctx.beginPath();
-    ctx.clearRect(0,0,can.width,can.height);
+    ctx.clearRect(0, 0, can.width, can.height);
     vertices.forEach((v) => { drawVertex(v) });
     vertices.forEach((v) => {
         v.connected_v.forEach((u) => {
@@ -40,14 +44,26 @@ function draw() {
 function drawVertex(v) {
     ctx.beginPath();
     ctx.arc(v.x, v.y, radius, 0, 2 * Math.PI);
+    ctx.clientX
     ctx.fillText(v.number, v.x - 3, v.y + 4, 10);
     ctx.stroke();
 }
 
 function drawLine(v, u) {
     ctx.beginPath();
-    ctx.moveTo(v.x, v.y);
-    ctx.lineTo(u.x, u.y);
+    let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
+    let cos_i = (v.x - u.x) / rast;
+    let sin_i = Math.sqrt(1 - cos_i * cos_i);
+    let s_y = radius * sin_i;
+    let s_x = radius * cos_i;
+    if (u.y > v.y) {
+        ctx.moveTo(v.x - s_x, v.y + s_y);
+        ctx.lineTo(u.x + s_x, u.y - s_y);
+    } else {
+        ctx.moveTo(v.x - s_x, v.y - s_y);
+        ctx.lineTo(u.x + s_x, u.y + s_y);
+    }
+    ctx.closePath();
     ctx.stroke();
 }
 
@@ -60,16 +76,18 @@ function getClickedCoords() {
 }
 var isVerticeClicked = 0;
 var first_vert;
+var verticeNum = 0;
 can.addEventListener('mousedown', event => {
     stateMachine.push("mousedown");
 
     let { x, y } = getClickedCoords();
 
-    let verticeNum = 0;
+
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
+            //check_longclick();
             isVerticeClicked++;
-            console.log("collision with vertice " + isVerticeClicked);
+            console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
     });
@@ -78,12 +96,14 @@ can.addEventListener('mousedown', event => {
         let v = { x, y, radius, number, connected_v };
         vertices.push(v);
         number++;
-        //drawVertex(v);
     }
     if (isVerticeClicked == 1) {
-        console.log(verticeNum);
-        first_vert = vertices[verticeNum - 1];
-        console.log(first_vert.number + "  clicked = 1");
+        if (verticeNum < 1) {
+            isVerticeClicked = 0;
+        } else {
+            first_vert = vertices[verticeNum - 1];
+            console.log(first_vert.number + "  clicked = 1");
+        }
     }
     if (isVerticeClicked == 2) {
         console.log(first_vert.number, verticeNum, " clicked = 2 ");
@@ -97,7 +117,20 @@ can.addEventListener('mousedown', event => {
         }
     }
     draw();
-})
+});
+/*
+function check_longclick(){
+    delay = setTimeout(check, longpress);
+    function check() {
+        let {x, y} = getClickedCoords();
+        let v = vertices[verticeNum - 1];
+        if(Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius)
+            isVerticeClicked = 3;
+        else
+            isVerticeClicked++;    
+    }
+
+}*/
 
 function reflectMouse(startX, startY, x, y) {
     ctx.moveTo(startX, startY);
@@ -107,7 +140,16 @@ function reflectMouse(startX, startY, x, y) {
 }
 
 can.addEventListener('mousemove', e => {
-    let offsetX = e.offsetX;
+    if (isVerticeClicked == 1) {
+        let rect = can.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        vertices[verticeNum - 1].x = x;
+        vertices[verticeNum - 1].y = y;
+        draw();
+    }
+    if (isVerticeClicked == 2) isVerticeClicked = 0;
+
 })
 
 function main() {
