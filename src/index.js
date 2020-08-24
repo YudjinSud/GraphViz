@@ -7,7 +7,7 @@ var number = 1;
 const radius = 15;
 
 var delay;
-
+var flag_ = 0;
 var longpress = 1300;
 
 var vertices = [];
@@ -15,7 +15,7 @@ var isVerticeClicked = 0;
 var first_vert;
 var verticeNum = 0;
 var stateMachine = [];
-
+first_vert = -1;
 can.width = document.body.clientWidth;
 can.height = document.body.clientHeight;
 
@@ -62,76 +62,86 @@ function getClickedCoords() {
     let rect = can.getBoundingClientRect();
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
-    console.log("Coordinate x: " + x, "Coordinate y: " + y);
+    //console.log("Coordinate x: " + x, "Coordinate y: " + y);
     return { x, y };
 }
 
 can.addEventListener('mousedown', event => {
-    stateMachine.push("mousedown");
 
     let { x, y } = getClickedCoords();
 
-
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
-            //check_longclick();
-            if (isVerticeClicked == 0) {
-                if (Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
-                else isVerticeClicked = 1;
-            } else isVerticeClicked++;
-            console.log("collision with vertice " + v.number, isVerticeClicked);
+            flag_ = 1;
+            // if (isVerticeClicked == 0) {
+            //     if (Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
+            //     else isVerticeClicked = 1;
+            // } else isVerticeClicked++;
+             console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
     });
-    if (isVerticeClicked == 0) {
+
+
+    // if (isVerticeClicked == 1) {
+    //     if (verticeNum < 1) {
+    //         isVerticeClicked = 0;
+    //     } else {
+    //         first_vert = vertices[verticeNum - 1];
+    //         console.log(first_vert.number + "  clicked = 1");
+    //     }
+    // }
+    draw();
+});
+
+can.addEventListener('mouseup', e => {
+    if (isVerticeClicked == 0 && !flag_) {
         let connected_v = [];
+        let { x, y } = getClickedCoords();
         let v = { x, y, radius, number, connected_v };
         vertices.push(v);
         number++;
-    }
-
-    if (isVerticeClicked == 1) {
-        if (verticeNum < 1) {
-            isVerticeClicked = 0;
-        } else {
+    } else {
+        console.log("popali v vertice");
+        if (isVerticeClicked == 0 && flag_) {
             first_vert = vertices[verticeNum - 1];
-            console.log(first_vert.number + "  clicked = 1");
+            isVerticeClicked++;
+            console.log(first_vert.number, verticeNum, " clicked = " + isVerticeClicked);
         }
-    }
-    if (isVerticeClicked == 2) {
-        console.log(first_vert.number, verticeNum, " clicked = 2 ");
-        isVerticeClicked = 0;
-        let second_vert = vertices[verticeNum - 1];
-        if (second_vert.number != first_vert.number) {
-            vertices[verticeNum - 1].connected_v.push(first_vert.number);
-            console.log(vertices[verticeNum - 1].connected_v[0].number + " p a p a");
-            vertices[first_vert.number - 1].connected_v.push(second_vert);
-        }
-    }
-    draw();
-});
-/*
-function check_longclick(){
-    delay = setTimeout(check, longpress);
-    function check() {
-        let {x, y} = getClickedCoords();
-        let v = vertices[verticeNum - 1];
-        if(Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius)
-            isVerticeClicked = 3;
-        else
-            isVerticeClicked++;    
-    }
+        else {
+            if (isVerticeClicked == 3) isVerticeClicked++;
+            else {
+                if (isVerticeClicked == 1 && flag_) {
+                    console.log(first_vert.number, verticeNum, "provodim liniuy ");
+                    isVerticeClicked = 0;
+                    let second_vert = vertices[verticeNum - 1];
+                    if (second_vert.number != first_vert.number) {
+                        vertices[verticeNum - 1].connected_v.push(first_vert.number);
+                        console.log(vertices[verticeNum - 1].connected_v[0].number + " p a p a");
+                        vertices[first_vert.number - 1].connected_v.push(second_vert);
+                    }
+                    first_vert = -1;
+                    draw();
+                }
 
-}
-function reflectMouse(startX, startY, x, y) {
-    ctx.moveTo(startX, startY);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.stroke();
-}
-*/
+            }
+        }
+    }
+    flag_ = 0;
+    console.log("end mouse up = " + isVerticeClicked);
+    draw();
+    // если изначально 0
+    // если было состояние 0, mousedown
+    // если после этого происходит mousemove - 3
+    // если после mousedown -> mouseup - состояние 1
+
+    // иначе состояние ++;
+});
+
 can.addEventListener('mousemove', e => {
-    if (isVerticeClicked == 3) {
+    console.log("moving  = " + isVerticeClicked);
+    if (isVerticeClicked == 0 && flag_) isVerticeClicked = 3;
+    else if (isVerticeClicked == 3) {
         let rect = can.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
@@ -140,12 +150,13 @@ can.addEventListener('mousemove', e => {
         draw();
     }
     if (isVerticeClicked == 4) isVerticeClicked = 0;
+    
     if (isVerticeClicked == 1) {
         let v = first_vert;
         let rect = can.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
-        let u = {x, y};
+        let u = { x, y };
         draw();
         ctx.beginPath();
         let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
@@ -162,7 +173,7 @@ can.addEventListener('mousemove', e => {
         }
         ctx.closePath();
         ctx.stroke();
-        
+
     }
 
 })
