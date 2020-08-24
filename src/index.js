@@ -11,7 +11,9 @@ var delay;
 var longpress = 1300;
 
 var vertices = [];
-
+var isVerticeClicked = 0;
+var first_vert;
+var verticeNum = 0;
 var stateMachine = [];
 
 can.width = document.body.clientWidth;
@@ -63,9 +65,7 @@ function getClickedCoords() {
     console.log("Coordinate x: " + x, "Coordinate y: " + y);
     return { x, y };
 }
-var isVerticeClicked = 0;
-var first_vert;
-var verticeNum = 0;
+
 can.addEventListener('mousedown', event => {
     stateMachine.push("mousedown");
 
@@ -122,15 +122,14 @@ function check_longclick(){
             isVerticeClicked++;    
     }
 
-}*/
-анной
+}
 function reflectMouse(startX, startY, x, y) {
     ctx.moveTo(startX, startY);
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.stroke();
 }
-
+*/
 can.addEventListener('mousemove', e => {
     if (isVerticeClicked == 3) {
         let rect = can.getBoundingClientRect();
@@ -141,6 +140,30 @@ can.addEventListener('mousemove', e => {
         draw();
     }
     if (isVerticeClicked == 4) isVerticeClicked = 0;
+    if (isVerticeClicked == 1) {
+        let v = first_vert;
+        let rect = can.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        let u = {x, y};
+        draw();
+        ctx.beginPath();
+        let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
+        let cos_i = (v.x - u.x) / rast;
+        let sin_i = Math.sqrt(1 - cos_i * cos_i);
+        let s_y = radius * sin_i;
+        let s_x = radius * cos_i;
+        if (u.y > v.y) {
+            ctx.moveTo(v.x - s_x, v.y + s_y);
+            ctx.lineTo(u.x, u.y);
+        } else {
+            ctx.moveTo(v.x - s_x, v.y - s_y);
+            ctx.lineTo(u.x, u.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        
+    }
 
 })
 
