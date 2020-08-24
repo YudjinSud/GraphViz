@@ -4,17 +4,7 @@ import { hi } from "./GraphLib"
 var can = document.getElementById("c");
 var ctx = can.getContext('2d');
 var number = 1;
-var begin_line_x, begin_line_y, end_line_x, end_line_y;
 const radius = 15;
-
-
-class Vertex {
-    x;
-    y;
-    radius;
-    number;
-    connected_v = [];
-}
 
 var delay;
 
@@ -44,7 +34,6 @@ function draw() {
 function drawVertex(v) {
     ctx.beginPath();
     ctx.arc(v.x, v.y, radius, 0, 2 * Math.PI);
-    ctx.clientX
     ctx.fillText(v.number, v.x - 3, v.y + 4, 10);
     ctx.stroke();
 }
@@ -86,10 +75,10 @@ can.addEventListener('mousedown', event => {
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
             //check_longclick();
-            if(isVerticeClicked == 0){
-                if(Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
-                else isVerticeClicked= 1;
-            }else isVerticeClicked++;
+            if (isVerticeClicked == 0) {
+                if (Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
+                else isVerticeClicked = 1;
+            } else isVerticeClicked++;
             console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
@@ -100,7 +89,7 @@ can.addEventListener('mousedown', event => {
         vertices.push(v);
         number++;
     }
-    
+
     if (isVerticeClicked == 1) {
         if (verticeNum < 1) {
             isVerticeClicked = 0;
@@ -117,7 +106,6 @@ can.addEventListener('mousedown', event => {
             vertices[verticeNum - 1].connected_v.push(first_vert.number);
             console.log(vertices[verticeNum - 1].connected_v[0].number + " p a p a");
             vertices[first_vert.number - 1].connected_v.push(second_vert);
-            //drawLine(first_vert, second_vert);
         }
     }
     draw();
@@ -135,7 +123,7 @@ function check_longclick(){
     }
 
 }*/
-
+анной
 function reflectMouse(startX, startY, x, y) {
     ctx.moveTo(startX, startY);
     ctx.beginPath();
