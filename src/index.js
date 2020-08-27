@@ -3,6 +3,7 @@ import { hi } from "./GraphLib"
 
 var can = document.getElementById("c");
 var ctx = can.getContext('2d');
+var menu = document.getElementById("menu").style;
 var number = 1;
 const radius = 15;
 
@@ -32,6 +33,7 @@ function draw() {
         });
     });
 }
+
 
 function drawVertex(v) {
     ctx.beginPath();
@@ -66,20 +68,46 @@ function getClickedCoords() {
 }
 
 can.addEventListener('mousedown', event => {
-
     let { x, y } = getClickedCoords();
 
-    vertices.forEach((v) => {
-        if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
-            flag_ = 1;
-             console.log("collision with vertice " + v.number, isVerticeClicked);
-            verticeNum = v.number;
-        }
-    });
-    draw();
+    if (event.button == 0) {
+        menu.opacity = "0"; // скрыли прошлое меню;
+        console.log("leftClick");
+        vertices.forEach((v) => {
+            if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
+                flag_ = 1;
+                console.log("collision with vertice " + v.number, isVerticeClicked);
+                verticeNum = v.number;
+            }
+        });
+        draw();
+    }
+    else if (event.button == 2) {
+        console.log("rightClick");
+        vertices.forEach((v) => {
+            if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
+                console.log("collision with vertice " + v.number, isVerticeClicked);
+                verticeNum = v.number;
+                drawMenu(x, y);
+            }
+        });
+
+    }
 });
 
+document.addEventListener("contextmenu", e=> {
+    e.preventDefault();
+})
+
+function drawMenu(x, y) {
+    menu.top = y + "px";
+    menu.left = x + "px";
+    menu.visibility = "visible";
+    menu.opacity = "1";
+}
+
 can.addEventListener('mouseup', e => {
+    if (e.button == 2) return;
     if (isVerticeClicked == 0 && !flag_) {
         let connected_v = [];
         let { x, y } = getClickedCoords();
@@ -123,6 +151,7 @@ can.addEventListener('mouseup', e => {
 });
 
 can.addEventListener('mousemove', e => {
+    if (e.button == 2) return;
     console.log("moving  = " + isVerticeClicked);
     if (isVerticeClicked == 0 && flag_) isVerticeClicked = 3;
     else if (isVerticeClicked == 3) {
