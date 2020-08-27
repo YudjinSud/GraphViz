@@ -62,7 +62,6 @@ function getClickedCoords() {
     let rect = can.getBoundingClientRect();
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
-    //console.log("Coordinate x: " + x, "Coordinate y: " + y);
     return { x, y };
 }
 
@@ -73,24 +72,10 @@ can.addEventListener('mousedown', event => {
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
             flag_ = 1;
-            // if (isVerticeClicked == 0) {
-            //     if (Math.floor(Math.random() * Math.floor(2)) == 1) isVerticeClicked = 3;
-            //     else isVerticeClicked = 1;
-            // } else isVerticeClicked++;
              console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
     });
-
-
-    // if (isVerticeClicked == 1) {
-    //     if (verticeNum < 1) {
-    //         isVerticeClicked = 0;
-    //     } else {
-    //         first_vert = vertices[verticeNum - 1];
-    //         console.log(first_vert.number + "  clicked = 1");
-    //     }
-    // }
     draw();
 });
 
@@ -134,7 +119,6 @@ can.addEventListener('mouseup', e => {
     // если было состояние 0, mousedown
     // если после этого происходит mousemove - 3
     // если после mousedown -> mouseup - состояние 1
-
     // иначе состояние ++;
 });
 
@@ -150,7 +134,6 @@ can.addEventListener('mousemove', e => {
         draw();
     }
     if (isVerticeClicked == 4) isVerticeClicked = 0;
-    
     if (isVerticeClicked == 1) {
         let v = first_vert;
         let rect = can.getBoundingClientRect();
