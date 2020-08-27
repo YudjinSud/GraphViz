@@ -9,7 +9,8 @@ const radius = 15;
 var delay;
 var flag_ = 0;
 var longpress = 1300;
-
+var used = [];
+used[10000] = 0;
 var vertices = [];
 var isVerticeClicked = 0;
 var first_vert;
@@ -25,11 +26,24 @@ function draw() {
     vertices.forEach((v) => { drawVertex(v) });
     vertices.forEach((v) => {
         v.connected_v.forEach((u) => {
-            if (u > 0) {
-                console.log(v.number + "->" + u);
-                drawLine(v, vertices[u - 1]);
-            }
+            console.log(v.number , "->", u.number);
+            drawLine(v, u);
         });
+    });
+}
+
+function start_dfs(v) {
+    for (let i = 0; i < number; i++)
+        used[i] = 0;
+    dfs(v);
+}
+
+function dfs(v) {
+    used[v.number - 1] = 1;
+    draw();
+    v.connected_v.forEach((u) => {
+        if (used[u.number - 1] != 1)
+            dfs(u);
     });
 }
 
@@ -42,6 +56,11 @@ function drawVertex(v) {
 
 function drawLine(v, u) {
     ctx.beginPath();
+
+    if (used[u.number - 1] == 1 && used[v.number - 1] == 1)
+        ctx.strokeStyle = 'red';
+    else
+        ctx.strokeStyle = 'black';
     let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
     let cos_i = (v.x - u.x) / rast;
     let sin_i = Math.sqrt(1 - cos_i * cos_i);
@@ -72,7 +91,7 @@ can.addEventListener('mousedown', event => {
     vertices.forEach((v) => {
         if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
             flag_ = 1;
-             console.log("collision with vertice " + v.number, isVerticeClicked);
+            console.log("collision with vertice " + v.number, isVerticeClicked);
             verticeNum = v.number;
         }
     });
@@ -97,12 +116,18 @@ can.addEventListener('mouseup', e => {
             if (isVerticeClicked == 3) isVerticeClicked++;
             else {
                 if (isVerticeClicked == 1 && flag_) {
+
                     console.log(first_vert.number, verticeNum, "provodim liniuy ");
                     isVerticeClicked = 0;
                     let second_vert = vertices[verticeNum - 1];
-                    if (second_vert.number != first_vert.number) {
-                        vertices[verticeNum - 1].connected_v.push(first_vert.number);
-                        console.log(vertices[verticeNum - 1].connected_v[0].number + " p a p a");
+                    let flag_con = false;
+                    first_vert.connected_v.forEach((u1) => {
+                        if (u1.number == second_vert.number)
+                            flag_con = true;
+                    });
+                    if (second_vert.number != first_vert.number && !flag_con) {
+                        vertices[verticeNum - 1].connected_v.push(first_vert);
+                        //console.log(vertices[verticeNum - 1].connected_v[0].number + " p a p a");
                         vertices[first_vert.number - 1].connected_v.push(second_vert);
                     }
                     first_vert = -1;
