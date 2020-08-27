@@ -54,16 +54,25 @@ function draw() {
     });
 }
 
-
-function start_dfs(v) {
+function clear_used_status() {
     for (let i = 0; i < number; i++)
         used[i] = 0;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function start_dfs(v) {
+    clear_used_status();
+    console.log("starting dfs");
     dfs(v);
 }
 
-function dfs(v) {
+async function dfs(v) {
     used[v.number - 1] = 1;
     draw();
+    await sleep(1000);
     v.connected_v.forEach((u) => {
         if (used[u.number - 1] != 1)
             dfs(u);
@@ -112,6 +121,7 @@ can.addEventListener('mousedown', event => {
     let { x, y } = getClickedCoords();
 
     if (event.button == 0) {
+        clear_used_status();
         menu.style.visibility = "hidden"; // скрыли прошлое меню;
         console.log("leftClick");
         vertices.forEach((v) => {
