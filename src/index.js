@@ -21,6 +21,27 @@ first_vert = -1;
 can.width = document.body.clientWidth;
 can.height = document.body.clientHeight;
 
+var dfs_start_btn = document.getElementById("start_dfs");
+var bfs_start_btn = document.getElementById("start_bfs");
+var dijkstra_start_btn = document.getElementById("start_dijkstra");
+
+dfs_start_btn.addEventListener("click", function () {
+    if (menu.style.opacity == "1")
+        start_dfs(vertices[verticeNum]);
+});
+
+
+bfs_start_btn.addEventListener("click", function () {
+    if (menu.style.opacity == "1")
+        alert(this.id);
+});
+
+
+dijkstra_start_btn.addEventListener("click", function () {
+    if (menu.style.opacity == "1")
+        alert(this.id);
+});
+
 function draw() {
     ctx.beginPath();
     ctx.clearRect(0, 0, can.width, can.height);
@@ -91,7 +112,7 @@ can.addEventListener('mousedown', event => {
     let { x, y } = getClickedCoords();
 
     if (event.button == 0) {
-        menu.style.opacity = "0"; // скрыли прошлое меню;
+        menu.style.visibility = "hidden"; // скрыли прошлое меню;
         console.log("leftClick");
         vertices.forEach((v) => {
             if (Math.abs(v.x - x) <= 2 * v.radius && Math.abs(v.y - y) <= 2 * v.radius) {
@@ -109,30 +130,12 @@ can.addEventListener('mousedown', event => {
                 console.log("collision with vertice " + v.number, isVerticeClicked);
                 verticeNum = v.number;
                 drawMenu(x, y);
-                //start_dfs(v);
             }
         });
 
     }
 });
 
-
-var dfs_start_btn = document.getElementById("start_dfs");
-dfs_start_btn.addEventListener("click",function() {
-    start_dfs(vertices[verticeNum]);
-});
-
-
-var bfs_start_btn = document.getElementById("start_bfs");
-bfs_start_btn.addEventListener("click",function() {
-    alert(this.id);
-});
-
-
-var dijkstra_start_btn = document.getElementById("start_dijkstra");
-dijkstra_start_btn.addEventListener("click",function() {
-    alert(this.id);
-});
 
 document.addEventListener("contextmenu", e => {
     e.preventDefault();
