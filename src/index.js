@@ -27,7 +27,7 @@ var dijkstra_start_btn = document.getElementById("start_dijkstra");
 
 dfs_start_btn.addEventListener("click", function () {
     if (menu.style.opacity == "1")
-        start_dfs(vertices[verticeNum]);
+        start_dfs(vertices[verticeNum - 1]);
 });
 
 
@@ -70,18 +70,26 @@ function start_dfs(v) {
 }
 
 async function dfs(v) {
+    
     used[v.number - 1] = 1;
     draw();
     await sleep(1000);
-    v.connected_v.forEach((u) => {
-        if (used[u.number - 1] != 1)
+    for(let i = 0; i < v.connected_v.length;i++){
+        let u = v.connected_v[i];
+        if (used[u.number - 1] != 1){
+            await sleep(1000);
             dfs(u);
-    });
+        }
+    }
 }
 
 
 function drawVertex(v) {
     ctx.beginPath();
+    if (used[v.number - 1] == 1)
+        ctx.strokeStyle = 'red';
+    else
+        ctx.strokeStyle = 'black';
     ctx.arc(v.x, v.y, radius, 0, 2 * Math.PI);
     ctx.fillText(v.number, v.x - 3, v.y + 4, 10);
     ctx.stroke();
@@ -89,11 +97,11 @@ function drawVertex(v) {
 
 function drawLine(v, u) {
     ctx.beginPath();
-
-    if (used[u.number - 1] == 1 && used[v.number - 1] == 1)
-        ctx.strokeStyle = 'red';
-    else
-        ctx.strokeStyle = 'black';
+    // if (used[u.number - 1] == 1 && used[v.number - 1] == 1)
+    //     ctx.strokeStyle = 'red';
+    // else
+    //     ctx.strokeStyle = 'black';
+    ctx.strokeStyle = 'green';
     let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
     let cos_i = (v.x - u.x) / rast;
     let sin_i = Math.sqrt(1 - cos_i * cos_i);
@@ -108,6 +116,7 @@ function drawLine(v, u) {
     }
     ctx.closePath();
     ctx.stroke();
+    //ctx.strokeStyle = 'black';
 }
 
 function getClickedCoords() {
