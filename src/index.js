@@ -12,6 +12,7 @@ var flag_ = 0;
 var longpress = 1300;
 var used = [];
 used[10000] = 0;
+var draw_dfs = [];
 var vertices = [];
 var isVerticeClicked = 0;
 var first_vert;
@@ -63,21 +64,34 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function start_dfs(v) {
+async function start_dfs(v) {
+    draw_dfs = [];
     clear_used_status();
     console.log("starting dfs");
     dfs(v);
+    // for(let i = 0; i < draw_dfs.length;i++)
+    //     console.log(draw_dfs[i]);
+    for(let i = 0; i < draw_dfs.length;i++){
+        draw();
+        ctx.beginPath();
+        ctx.strokeStyle = 'red';
+        for(let j = 0; j <= i; j++){
+            drawVertex(vertices[draw_dfs[j].number - 1]);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'black';
+        await sleep(1000);
+    }
 }
 
+
+
 async function dfs(v) {
-    
+    draw_dfs.push(v);
     used[v.number - 1] = 1;
-    draw();
-    await sleep(1000);
     for(let i = 0; i < v.connected_v.length;i++){
         let u = v.connected_v[i];
         if (used[u.number - 1] != 1){
-            await sleep(1000);
             dfs(u);
         }
     }
@@ -86,10 +100,6 @@ async function dfs(v) {
 
 function drawVertex(v) {
     ctx.beginPath();
-    if (used[v.number - 1] == 1)
-        ctx.strokeStyle = 'red';
-    else
-        ctx.strokeStyle = 'black';
     ctx.arc(v.x, v.y, radius, 0, 2 * Math.PI);
     ctx.fillText(v.number, v.x - 3, v.y + 4, 10);
     ctx.stroke();
@@ -116,7 +126,7 @@ function drawLine(v, u) {
     }
     ctx.closePath();
     ctx.stroke();
-    //ctx.strokeStyle = 'black';
+    ctx.strokeStyle = 'black';
 }
 
 function getClickedCoords() {
