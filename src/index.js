@@ -65,6 +65,7 @@ function sleep(ms) {
 }
 
 async function start_dfs(v) {
+    menu.style.visibility = "hidden";
     draw_dfs = [];
     clear_used_status();
     console.log("starting dfs");
@@ -107,10 +108,6 @@ function drawVertex(v) {
 
 function drawLine(v, u) {
     ctx.beginPath();
-    // if (used[u.number - 1] == 1 && used[v.number - 1] == 1)
-    //     ctx.strokeStyle = 'red';
-    // else
-    //     ctx.strokeStyle = 'black';
     ctx.strokeStyle = 'green';
     let rast = (Math.sqrt((v.x - u.x) * (v.x - u.x) + (v.y - u.y) * (v.y - u.y)));
     let cos_i = (v.x - u.x) / rast;
@@ -137,6 +134,7 @@ function getClickedCoords() {
 }
 
 can.addEventListener('mousedown', event => {
+    draw();
     let { x, y } = getClickedCoords();
 
     if (event.button == 0) {
